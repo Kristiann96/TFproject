@@ -8,8 +8,8 @@ from sklearn.preprocessing import MinMaxScaler, RobustScaler
 from sklearn.model_selection import train_test_split
 
 # Configuration
-SEQ_LENGTH = 2  # Number of years for input sequence
-BATCH_SIZE = 32
+SEQ_LENGTH = 5  # Number of years for input sequence
+BATCH_SIZE = 128
 EPOCHS = 100
 EARLY_STOPPING_PATIENCE = 15
 RANDOM_SEED = 42
