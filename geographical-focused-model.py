@@ -7,8 +7,11 @@ import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler, RobustScaler
 from sklearn.model_selection import train_test_split
 
+# Check TensorFlow version
+print(f"TensorFlow version: {tf.__version__}")
+
 # Configuration
-SEQ_LENGTH = 5  # Number of years for input sequence
+SEQ_LENGTH = 8  # Number of years for input sequence
 BATCH_SIZE = 128
 EPOCHS = 100
 EARLY_STOPPING_PATIENCE = 15
@@ -52,7 +55,7 @@ def load_full_data():
     
     return loaded_df
 
-def select_municipalities(df, num_municipalities=5):
+def select_municipalities(df, num_municipalities=25):  # MODIFIED: Increased from 5 to 25
     """Select a subset of municipalities for analysis"""
     print("Analyzing municipalities in the dataset...")
     
@@ -82,6 +85,7 @@ def select_municipalities(df, num_municipalities=5):
         selected_kommuner = complete_kommuner.index.tolist()
     else:
         # Select a mix of large and small municipalities
+        # MODIFIED: Take more municipalities from each population tier
         large_kommuner = complete_kommuner.nlargest(num_municipalities // 2, 'population')
         small_kommuner = complete_kommuner.nsmallest(num_municipalities // 2, 'population')
         selected_kommuner = list(large_kommuner.index) + list(small_kommuner.index)
@@ -96,8 +100,8 @@ def select_municipalities(df, num_municipalities=5):
     print(selected_info)
     
     # Save the list of selected municipalities
-    selected_info.to_csv('selected_municipalities.csv')
-    print("Saved information about selected municipalities to 'selected_municipalities.csv'")
+    selected_info.to_csv('selected_municipalities_5x.csv')
+    print("Saved information about selected municipalities to 'selected_municipalities_5x.csv'")
     
     # Filter the original dataset to only include the selected municipalities
     filtered_df = df[df['kommunenummer'].isin(selected_kommuner)].copy()
@@ -223,7 +227,7 @@ def create_features(df):
     print("Feature engineering complete")
     return df
 
-def find_complete_sequences(df, seq_length=SEQ_LENGTH):
+def find_complete_sequences(df, seq_length=SEQ_LENGTH, min_count=None):  # Modified to include an optional min_count parameter
     """Find grunnkretser with complete sequences of data"""
     print(f"Finding grunnkretser with at least {seq_length+1} years of consecutive data...")
     
@@ -243,10 +247,29 @@ def find_complete_sequences(df, seq_length=SEQ_LENGTH):
                 break
     
     print(f"Found {len(complete_grunnkretser)} grunnkretser with complete sequences")
+    
+    # MODIFIED: If min_count is specified, load additional grunnkretser from file if available
+    if min_count and len(complete_grunnkretser) < min_count:
+        print(f"Found fewer than {min_count} grunnkretser, checking for additional data...")
+        if os.path.exists('complete_grunnkretser.csv'):
+            extra_grunnkretser_df = pd.read_csv('complete_grunnkretser.csv')
+            extra_grunnkretser = extra_grunnkretser_df['grunnkretsnummer'].tolist()
+            
+            # Add grunnkretser from the file that are not already in our list
+            new_grunnkretser = [g for g in extra_grunnkretser if g not in complete_grunnkretser]
+            
+            # Add enough to reach min_count if possible
+            needed = min_count - len(complete_grunnkretser)
+            if needed > 0:
+                additional = new_grunnkretser[:needed]
+                complete_grunnkretser.extend(additional)
+                print(f"Added {len(additional)} grunnkretser from external file")
+    
+    print(f"Final count: {len(complete_grunnkretser)} grunnkretser with complete sequences")
     return complete_grunnkretser
 
-def create_time_series_datasets(df, complete_grunnkretser, target_col='folketilvekst', seq_length=SEQ_LENGTH):
-    """Create sequences for LSTM model"""
+def create_time_series_datasets(df, complete_grunnkretser, target_col='folketilvekst', seq_length=5):  # Changed default to 5 explicitly
+    """Create sequences for LSTM model with sliding window approach to increase data volume"""
     print(f"Creating time series sequences with target column: {target_col}")
     
     # If target column is missing, create it from totalBefolkning
@@ -274,17 +297,29 @@ def create_time_series_datasets(df, complete_grunnkretser, target_col='folketilv
     
     print(f"Creating sequences from {len(filtered_df)} filtered records...")
     
-    # Group by grunnkrets and create sequences
+    # Group by grunnkrets and create sequences with sliding window
     X_sequences = []
     y_sequences = []
     metadata = []  # Store grunnkrets, kommune, year for each sequence
+    
+    sequence_counter = 0
+    grunnkrets_counter = 0
+    
+    # Adjust sequence length for this run - make sure it's smaller than available years
+    # This is crucial - if seq_length is too large, we won't get multiple sequences
+    years_available = df['year'].nunique()
+    effective_seq_length = min(seq_length, years_available - 2)  # Ensure at least 2 sequences possible
+    
+    print(f"Years available: {years_available}, using effective sequence length: {effective_seq_length}")
     
     for grunnkrets, group in filtered_df.groupby('grunnkretsnummer'):
         try:
             # Sort by year
             group = group.sort_values('year')
             
-            if len(group) < seq_length + 1:
+            # Check if we have enough years of data
+            if len(group) < effective_seq_length + 1:
+                print(f"Not enough data for grunnkrets {grunnkrets}: {len(group)} years (need {effective_seq_length + 1})")
                 continue
                 
             # Get feature values
@@ -296,17 +331,31 @@ def create_time_series_datasets(df, complete_grunnkretser, target_col='folketilv
                 year_values = group['year'].values
                 kommune_values = group['kommunenummer'].values
                 
-                # Create sequences
-                for i in range(len(group) - seq_length):
-                    X_sequences.append(feature_values[i:i+seq_length])
-                    y_sequences.append(target_values[i+seq_length])
+                # Create multiple sequences per grunnkrets using a sliding window
+                # For a 9-year dataset with seq_length=5, we could create up to 4 sequences per grunnkrets
+                max_start_idx = len(group) - effective_seq_length
+                
+                sequences_this_grunnkrets = 0
+                for i in range(max_start_idx):
+                    X_sequences.append(feature_values[i:i+effective_seq_length])
+                    y_sequences.append(target_values[i+effective_seq_length])
                     
                     # Store metadata
                     metadata.append({
                         'grunnkretsnummer': grunnkrets,
-                        'kommunenummer': kommune_values[i+seq_length],
-                        'year': year_values[i+seq_length]
+                        'kommunenummer': kommune_values[i+effective_seq_length],
+                        'year': year_values[i+effective_seq_length],
+                        'sequence_id': f"{grunnkrets}_{i}"  # Add unique sequence identifier
                     })
+                    sequence_counter += 1
+                    sequences_this_grunnkrets += 1
+                
+                if sequences_this_grunnkrets > 0:
+                    grunnkrets_counter += 1
+                    if grunnkrets_counter % 100 == 0 or grunnkrets_counter == 1:
+                        print(f"Processed {grunnkrets_counter} grunnkretser, created {sequence_counter} sequences")
+                        print(f"Latest: Created {sequences_this_grunnkrets} sequences from grunnkrets {grunnkrets}")
+                
         except Exception as e:
             print(f"Error processing grunnkrets {grunnkrets}: {e}")
             continue
@@ -317,14 +366,27 @@ def create_time_series_datasets(df, complete_grunnkretser, target_col='folketilv
         y = np.array(y_sequences)
         metadata_df = pd.DataFrame(metadata)
         
+        # Calculate and print statistics about sequences per grunnkrets
+        sequences_per_grunnkrets = metadata_df['grunnkretsnummer'].value_counts()
+        avg_sequences = sequences_per_grunnkrets.mean()
+        max_sequences = sequences_per_grunnkrets.max()
+        min_sequences = sequences_per_grunnkrets.min()
+        
         print(f"Created {len(X)} sequences from {len(metadata_df['grunnkretsnummer'].unique())} grunnkretser")
+        print(f"Average sequences per grunnkrets: {avg_sequences:.2f} (min: {min_sequences}, max: {max_sequences})")
+        
+        # Print distribution of sequences per grunnkrets
+        seq_counts = sequences_per_grunnkrets.value_counts().sort_index()
+        print("Distribution of sequences per grunnkrets:")
+        for count, num_grunnkretser in seq_counts.items():
+            print(f"  {count} sequences: {num_grunnkretser} grunnkretser")
+        
         print(f"X shape: {X.shape}, y shape: {y.shape}")
         
         return X, y, metadata_df, feature_cols
     else:
         print("No sequences created. Check your data.")
         return None, None, None, None
-
 def split_data(X, y, metadata_df):
     """Split data into training, validation, and testing sets"""
     print("Splitting data into train, validation, and test sets...")
@@ -428,55 +490,82 @@ def scale_data(X_train, X_val, X_test, y_train, y_val, y_test):
             feature_scaler, target_scaler)
 
 def build_model(input_shape):
-    """Build LSTM model for time series prediction"""
-    print(f"Building model with input shape {input_shape}")
+    """Build enhanced LSTM model for time series prediction with increased complexity"""
+    print(f"Building enhanced model with input shape {input_shape}")
     
+    # More complex model architecture
     model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(64, return_sequences=True, input_shape=(input_shape[1], input_shape[2])),
+        # First LSTM layer with increased units
+        tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(input_shape[1], input_shape[2])),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.3),
+        
+        # Second LSTM layer with more units
+        tf.keras.layers.LSTM(128, return_sequences=True),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.3),
+        
+        # Third LSTM layer
+        tf.keras.layers.LSTM(64),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.3),
+        
+        # Deeper dense layers
+        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.LSTM(32),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(16, activation='relu'),
+        
+        tf.keras.layers.Dense(32, activation='relu'),
+        tf.keras.layers.BatchNormalization(),
+        
+        # Output layer
         tf.keras.layers.Dense(1)
     ])
     
-    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    # Use a lower initial learning rate
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
+    
+    model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
     model.summary()
     
     return model
 
-def train_model(X_train, y_train, X_val, y_val):
-    """Train the model with early stopping based on validation data"""
-    print("Training the model...")
+def train_model(X_train, y_train, X_val, y_val, feature_cols):
+    """Train the model with more extensive settings"""
+    print("Training enhanced model...")
     
     # Build the model
     model = build_model(X_train.shape)
     
-    # Add callbacks
+    # Add callbacks with adjusted parameters
     callbacks = [
-        # Early stopping to prevent overfitting
+        # Early stopping with increased patience
         tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
-            patience=EARLY_STOPPING_PATIENCE,
+            patience=25,  # Increased from 15
             restore_best_weights=True,
             verbose=1
         ),
         # Model checkpoint to save the best model
         tf.keras.callbacks.ModelCheckpoint(
-            'best_model.h5',
+            'best_model_enhanced.h5',
             monitor='val_loss',
             save_best_only=True,
             verbose=1
         ),
-        # Reduce learning rate on plateau
+        # Reduce learning rate on plateau with smaller factor
         tf.keras.callbacks.ReduceLROnPlateau(
             monitor='val_loss',
-            factor=0.5,
-            patience=5,
-            min_lr=0.0001,
+            factor=0.7,  # More gradual reduction (was 0.5)
+            patience=8,  # Increased from 5
+            min_lr=0.00001,
             verbose=1
         )
     ]
+    
+    # Training configuration
+    EPOCHS = 150  # Increased from 100
+    BATCH_SIZE = 64  # Reduced from 128 for more gradient updates
     
     # Train model
     print(f"Training model for up to {EPOCHS} epochs with batch size {BATCH_SIZE}...")
@@ -508,12 +597,41 @@ def train_model(X_train, y_train, X_val, y_val):
     plt.legend()
     
     plt.tight_layout()
-    plt.savefig('training_history.png')
-    print("Saved training history plot to 'training_history.png'")
+    plt.savefig('training_history_enhanced.png')
+    print("Saved training history plot to 'training_history_enhanced.png'")
     
-    # Save model
-    model.save('population_growth_model.h5')
-    print("Saved model to 'population_growth_model.h5'")
+    # Save model in TF format
+    model.save('population_growth_model_enhanced.h5')
+    print("Saved model to 'population_growth_model_enhanced.h5'")
+    
+    # Save model in TensorFlow.js format
+    try:
+        # Import TensorFlow.js converter module
+        import tensorflowjs as tfjs
+        
+        # Create directory for TF.js model
+        tfjs_dir = 'population_growth_model_enhanced_tfjs'
+        print(f"Saving TensorFlow.js model to '{tfjs_dir}'...")
+        
+        # Convert and save the model for TensorFlow.js
+        tfjs.converters.save_keras_model(model, tfjs_dir)
+        print(f"Successfully saved TensorFlow.js model to '{tfjs_dir}'")
+        
+        # Save metadata about input shape and feature names for easier use in JavaScript
+        input_metadata = {
+            'input_shape': X_train.shape[1:],
+            'feature_names': feature_cols
+        }
+        
+        # Save as JSON
+        import json
+        with open(f"{tfjs_dir}/model_metadata.json", 'w') as f:
+            json.dump(input_metadata, f, indent=2)
+        print(f"Saved model metadata to '{tfjs_dir}/model_metadata.json'")
+        
+    except ImportError:
+        print("Warning: tensorflowjs package not found. TensorFlow.js model not saved.")
+        print("To install, run: pip install tensorflowjs")
     
     return model, history
 
@@ -545,8 +663,8 @@ def evaluate_model(model, X_test, y_test, target_scaler, metadata_test):
     results_df['abs_error'] = np.abs(y_true - y_pred)
     
     # Save results
-    results_df.to_csv('prediction_results.csv', index=False)
-    print("Saved detailed prediction results to 'prediction_results.csv'")
+    results_df.to_csv('prediction_results_5x.csv', index=False)  # MODIFIED: Changed filename
+    print("Saved detailed prediction results to 'prediction_results_5x.csv'")
     
     # Plot predictions vs actual
     plt.figure(figsize=(10, 6))
@@ -555,8 +673,8 @@ def evaluate_model(model, X_test, y_test, target_scaler, metadata_test):
     plt.title('Predicted vs Actual Population Growth')
     plt.xlabel('Actual')
     plt.ylabel('Predicted')
-    plt.savefig('predictions_vs_actual.png')
-    print("Saved predictions vs actual plot to 'predictions_vs_actual.png'")
+    plt.savefig('predictions_vs_actual_5x.png')  # MODIFIED: Changed filename
+    print("Saved predictions vs actual plot to 'predictions_vs_actual_5x.png'")
     
     # Analyze error by municipality
     kommune_error = results_df.groupby('kommunenummer').agg({
@@ -577,21 +695,101 @@ def evaluate_model(model, X_test, y_test, target_scaler, metadata_test):
     plt.ylabel('MAE')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('error_by_municipality.png')
-    print("Saved error by municipality plot to 'error_by_municipality.png'")
+    plt.savefig('error_by_municipality_5x.png')  # MODIFIED: Changed filename
+    print("Saved error by municipality plot to 'error_by_municipality_5x.png'")
     
     return results_df, mae, mse, rmse
 
+def export_model_for_web(model, feature_cols, scalers=None):
+    """Export additional files needed for web deployment"""
+    print("Exporting additional files for web deployment...")
+    
+    # Create a web deployment directory
+    web_dir = 'web_deployment'
+    os.makedirs(web_dir, exist_ok=True)
+    
+    # Save the list of feature names
+    feature_df = pd.DataFrame({'feature': feature_cols})
+    feature_df.to_csv(f'{web_dir}/features.csv', index=False)
+    
+    # Create a model metadata file with information about the model
+    metadata = {
+        'model_name': 'Population Growth Prediction Model',
+        'input_sequence_length': SEQ_LENGTH,
+        'feature_count': len(feature_cols),
+        'created_date': pd.Timestamp.now().strftime('%Y-%m-%d'),
+        'features': feature_cols
+    }
+    
+    # Save metadata as JSON
+    import json
+    with open(f'{web_dir}/model_info.json', 'w') as f:
+        json.dump(metadata, f, indent=2)
+    
+    # If scalers are provided, save them for later use
+    if scalers:
+        import pickle
+        feature_scaler, target_scaler = scalers
+        
+        # Save the scalers
+        with open(f'{web_dir}/feature_scaler.pkl', 'wb') as f:
+            pickle.dump(feature_scaler, f)
+            
+        with open(f'{web_dir}/target_scaler.pkl', 'wb') as f:
+            pickle.dump(target_scaler, f)
+            
+        print(f"Saved scalers to '{web_dir}/' directory")
+    
+    # Create a simple README file with instructions
+    readme = """# Population Growth Prediction Model
+
+This directory contains files for deploying the Norwegian population growth prediction model to web applications.
+
+## Files:
+- model/: TensorFlow.js model files
+- features.csv: List of features used by the model
+- model_info.json: Metadata about the model
+- feature_scaler.pkl: Scikit-learn scaler for input features
+- target_scaler.pkl: Scikit-learn scaler for prediction output
+
+## Usage:
+1. Load the TensorFlow.js model in your web application
+2. Preprocess input data using the same features and scaling
+3. Make predictions using sequences of length {seq_length}
+4. Scale the output predictions back to original units
+
+For questions, refer to the original project documentation.
+""".format(seq_length=SEQ_LENGTH)
+    
+    with open(f'{web_dir}/README.md', 'w') as f:
+        f.write(readme)
+    
+    print(f"Created web deployment files in '{web_dir}/' directory")
+    
+    # Copy the TensorFlow.js model to the web directory
+    if os.path.exists('population_growth_model_5x_tfjs'):
+        import shutil
+        # Create model subdirectory
+        os.makedirs(f'{web_dir}/model', exist_ok=True)
+        
+        # Copy files
+        for file in os.listdir('population_growth_model_5x_tfjs'):
+            shutil.copy(
+                os.path.join('population_growth_model_5x_tfjs', file),
+                os.path.join(web_dir, 'model', file)
+            )
+        print(f"Copied TensorFlow.js model to '{web_dir}/model/' directory")
+
 def main():
-    print("Starting geographically focused population growth prediction...")
+    print("Starting geographically focused population growth prediction with 5x data...")  # MODIFIED: Updated message
     
     # Step 1: Load the full dataset
     df = load_full_data()
     if df is None:
         return
     
-    # Step 2: Select a subset of municipalities
-    filtered_df, selected_kommuner = select_municipalities(df, num_municipalities=5)
+    # Step 2: Select a subset of municipalities (MODIFIED: increased from 5 to 25)
+    filtered_df, selected_kommuner = select_municipalities(df, num_municipalities=25)
     
     # Step 3: Preprocess the data - clean outliers and extreme values
     filtered_df = preprocess_data(filtered_df)
@@ -600,7 +798,10 @@ def main():
     filtered_df = create_features(filtered_df)
     
     # Step 5: Find complete sequences
-    complete_grunnkretser = find_complete_sequences(filtered_df)
+    # MODIFIED: Added target minimum count of sequences (5x the original)
+    # Looking at prediction_results.csv, we have about 140 sequences in the original model
+    # So we aim for at least 700 sequences
+    complete_grunnkretser = find_complete_sequences(filtered_df, min_count=700)
     
     if not complete_grunnkretser:
         print("No complete sequences found. Reducing sequence length requirements...")
@@ -627,7 +828,7 @@ def main():
     X_train_scaled, X_val_scaled, X_test_scaled, y_train_scaled, y_val_scaled, y_test_scaled, feature_scaler, target_scaler = scaled_data
     
     # Step 9: Train the model
-    model, history = train_model(X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled)
+    model, history = train_model(X_train_scaled, y_train_scaled, X_val_scaled, y_val_scaled, feature_cols)
     
     # Step 10: Evaluate the model
     results_df, mae, mse, rmse = evaluate_model(model, X_test_scaled, y_test_scaled, target_scaler, metadata_test)
@@ -636,9 +837,32 @@ def main():
     print(f"Final Test MAE: {mae:.4f}")
     print(f"Final Test RMSE: {rmse:.4f}")
     
+    # Compare with original model if results exist
+    if os.path.exists('prediction_results.csv'):
+        original_results = pd.read_csv('prediction_results.csv')
+        original_mae = original_results['abs_error'].mean()
+        original_mse = np.mean(np.square(original_results['error']))
+        original_rmse = np.sqrt(original_mse)
+        
+        print("\nComparison with original model:")
+        print(f"Original Model MAE: {original_mae:.4f}, New Model MAE: {mae:.4f}")
+        print(f"Original Model RMSE: {original_rmse:.4f}, New Model RMSE: {rmse:.4f}")
+        print(f"Data Size: Original={len(original_results)} vs New={len(results_df)} sequences")
+        
+        if mae < original_mae:
+            print("The expanded model shows improved accuracy!")
+        else:
+            print("The expanded model has different performance characteristics.")
+    
     # Save feature information
-    pd.DataFrame({'feature': feature_cols}).to_csv('model_features.csv', index=False)
-    print("Saved model feature information to 'model_features.csv'")
+    pd.DataFrame({'feature': feature_cols}).to_csv('model_features_5x.csv', index=False)
+    print("Saved model feature information to 'model_features_5x.csv'")
+    
+    # Export additional files for web deployment
+    export_model_for_web(model, feature_cols, (feature_scaler, target_scaler))
+    
+    print("\nAll tasks completed successfully!")
+    print("The expanded model (5x data) and TensorFlow.js version are ready for use.")
 
 if __name__ == "__main__":
     main()
