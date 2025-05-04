@@ -1,11 +1,12 @@
 """
 Model module for Population Growth Prediction model
-Contains the model class and related functions
+Simplified version that only uses one year as input
 """
 import os
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import RobustScaler
+import pandas as pd
 
 from config import ModelConfig
 
@@ -21,46 +22,36 @@ class PopulationGrowthModel:
         tf.random.set_seed(self.config.RANDOM_SEED)
     
     def build(self, input_shape):
-        """Build model architecture"""
+        """Build simplified model architecture that works with single year inputs"""
         print(f"Building model with input shape {input_shape}")
         
+        # For single year inputs, we don't need sequence modeling with LSTM
+        # We can use a simpler dense neural network
         model = tf.keras.Sequential([
-            # First LSTM layer with increased units
-            tf.keras.layers.LSTM(
-                self.config.LSTM_UNITS[0], 
-                return_sequences=True, 
-                input_shape=(input_shape[1], input_shape[2])
-            ),
-            tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dropout(self.config.DROPOUT_RATES[0]),
+            # Input layer
+            tf.keras.layers.InputLayer(input_shape=input_shape),
             
-            # Second LSTM layer with more units
-            tf.keras.layers.LSTM(
-                self.config.LSTM_UNITS[1], 
-                return_sequences=True
-            ),
+            # First hidden layer
+            tf.keras.layers.Dense(128, activation='relu'),
             tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dropout(self.config.DROPOUT_RATES[1]),
+            tf.keras.layers.Dropout(0.3),
             
-            # Third LSTM layer
-            tf.keras.layers.LSTM(self.config.LSTM_UNITS[2]),
+            # Second hidden layer
+            tf.keras.layers.Dense(64, activation='relu'),
             tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dropout(self.config.DROPOUT_RATES[2]),
+            tf.keras.layers.Dropout(0.2),
             
-            # Deeper dense layers
-            tf.keras.layers.Dense(self.config.DENSE_UNITS[0], activation='relu'),
+            # Third hidden layer
+            tf.keras.layers.Dense(32, activation='relu'),
             tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dropout(self.config.DROPOUT_RATES[3]),
-            
-            tf.keras.layers.Dense(self.config.DENSE_UNITS[1], activation='relu'),
-            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Dropout(0.1),
             
             # Output layer
-            tf.keras.layers.Dense(self.config.DENSE_UNITS[2])
+            tf.keras.layers.Dense(1)
         ])
         
         # Use a lower initial learning rate
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         
         model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
         model.summary()
@@ -94,22 +85,12 @@ class PopulationGrowthModel:
         # Use RobustScaler which is less sensitive to outliers
         self.feature_scaler = RobustScaler()
         
-        # Reshape for scaling
-        X_train_reshaped = X_train.reshape(X_train.shape[0], -1)
-        X_val_reshaped = X_val.reshape(X_val.shape[0], -1)
-        X_test_reshaped = X_test.reshape(X_test.shape[0], -1)
-        
-        # Fit on training data only
-        X_train_scaled = self.feature_scaler.fit_transform(X_train_reshaped)
+        # Fit on training data
+        X_train_scaled = self.feature_scaler.fit_transform(X_train)
         
         # Transform validation and test data
-        X_val_scaled = self.feature_scaler.transform(X_val_reshaped)
-        X_test_scaled = self.feature_scaler.transform(X_test_reshaped)
-        
-        # Reshape back to 3D for LSTM
-        X_train_scaled = X_train_scaled.reshape(X_train.shape)
-        X_val_scaled = X_val_scaled.reshape(X_val.shape)
-        X_test_scaled = X_test_scaled.reshape(X_test.shape)
+        X_val_scaled = self.feature_scaler.transform(X_val)
+        X_test_scaled = self.feature_scaler.transform(X_test)
         
         # Scale the target variable
         self.target_scaler = RobustScaler()
@@ -133,7 +114,7 @@ class PopulationGrowthModel:
         print("Training model...")
         
         if self.model is None:
-            self.build(X_train.shape)
+            self.build(X_train.shape[1:])
         
         # Add callbacks
         callbacks = [
@@ -179,15 +160,9 @@ class PopulationGrowthModel:
         return history
     
     def predict(self, X):
-        """Make predictions with proper reshaping"""
+        """Make predictions for single year inputs"""
         if self.model is None:
             raise ValueError("Model has not been trained or loaded yet")
-        
-        # Reshape input for LSTM if needed
-        if len(X.shape) == 2:  # If X is 2D
-            # For sequence length n, we need n identical frames as a starting point
-            X = np.array([X] * self.config.SEQ_LENGTH)
-            X = np.transpose(X, (1, 0, 2))
         
         # Make predictions
         predictions = self.model.predict(X, verbose=0)
@@ -231,9 +206,9 @@ class PopulationGrowthModel:
                     if os.path.exists(self.config.FEATURE_LIST_FILE):
                         features_df = pd.read_csv(self.config.FEATURE_LIST_FILE)
                         feature_list = features_df['feature'].tolist()
-                        input_shape = (self.config.SEQ_LENGTH, len(feature_list))
+                        input_shape = (len(feature_list),)  # Single year input shape
                     else:
-                        input_shape = (self.config.SEQ_LENGTH, 57)  # Default from training
+                        input_shape = (57,)  # Default single year input shape
                     
                     # Build the model
                     self.build(input_shape)

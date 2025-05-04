@@ -1,6 +1,6 @@
 """
 Data pipeline module for Population Growth Prediction model
-Handles data loading, preprocessing, and sequence creation
+Simplified to use only 1 input year for predictions
 """
 import os
 import numpy as np
@@ -43,7 +43,7 @@ class DataPipeline:
         print(f"Data contains {len(years)} years: {sorted(years)}")
         
         if len(years) < 2:
-            print("WARNING: Data doesn't have enough years for time series analysis.")
+            print("WARNING: Data needs at least 2 years (current year and target year).")
             return None
         
         return loaded_df
@@ -149,28 +149,36 @@ class DataPipeline:
         return df
     
     def find_complete_sequences(self, df, seq_length=None, min_count=None):
-        """Find grunnkretser with complete sequences of data"""
-        if seq_length is None:
-            seq_length = self.config.SEQ_LENGTH
+        """Find grunnkretser with target year data available (simplified from multi-year sequences)"""
+        # Always use sequence length of 1 for simplified model
+        seq_length = 1
             
-        print(f"Finding grunnkretser with at least {seq_length+1} years of consecutive data...")
+        print(f"Finding grunnkretser with at least two consecutive years of data...")
         
         complete_grunnkretser = []
-        counts = 0
         
-        # Check each grunnkrets
+        # Get all unique years
+        all_years = sorted(df['year'].unique())
+        
+        # We need at least one year as input and another year as target
+        if len(all_years) < 2:
+            print("Not enough years in dataset to create input-target pairs")
+            return []
+        
+        # For each grunnkrets, check if it has data for at least 2 consecutive years
         for grunnkrets, group in df.groupby('grunnkretsnummer'):
-            # Sort by year
-            sorted_years = sorted(group['year'].unique())
+            years_present = set(group['year'].unique())
             
-            # Check if we have at least seq_length+1 consecutive years
-            for i in range(len(sorted_years) - seq_length):
-                if sorted_years[i+seq_length] - sorted_years[i] == seq_length:
-                    complete_grunnkretser.append(grunnkrets)
-                    counts += 1
+            has_consecutive_years = False
+            for i in range(len(all_years)-1):
+                if all_years[i] in years_present and all_years[i+1] in years_present:
+                    has_consecutive_years = True
                     break
+                    
+            if has_consecutive_years:
+                complete_grunnkretser.append(grunnkrets)
         
-        print(f"Found {len(complete_grunnkretser)} grunnkretser with complete sequences")
+        print(f"Found {len(complete_grunnkretser)} grunnkretser with consecutive years of data")
         
         # If min_count is specified, load additional grunnkretser from file if available
         if min_count and len(complete_grunnkretser) < min_count:
@@ -189,15 +197,15 @@ class DataPipeline:
                     complete_grunnkretser.extend(additional)
                     print(f"Added {len(additional)} grunnkretser from external file")
         
-        print(f"Final count: {len(complete_grunnkretser)} grunnkretser with complete sequences")
+        print(f"Final count: {len(complete_grunnkretser)} grunnkretser")
         return complete_grunnkretser
     
     def create_time_series_datasets(self, df, complete_grunnkretser, target_col='folketilvekst', seq_length=None):
-        """Create sequences for LSTM model with sliding window approach"""
-        if seq_length is None:
-            seq_length = self.config.SEQ_LENGTH
+        """Create simplified input-target pairs (using just one year to predict the next)"""
+        # Override seq_length to always be 1
+        seq_length = 1
             
-        print(f"Creating time series sequences with target column: {target_col}")
+        print(f"Creating input-target pairs with target column: {target_col}")
         
         # If target column is missing, create it from totalBefolkning
         if target_col not in df.columns or df[target_col].isna().all():
@@ -220,79 +228,63 @@ class DataPipeline:
         # Filter to just the grunnkretser with complete data
         filtered_df = df[df['grunnkretsnummer'].isin(complete_grunnkretser)]
         
-        print(f"Creating sequences from {len(filtered_df)} filtered records...")
+        print(f"Creating input-target pairs from {len(filtered_df)} filtered records...")
         
-        # Group by grunnkrets and create sequences with sliding window
-        X_sequences = []
-        y_sequences = []
-        metadata = []  # Store grunnkrets, kommune, year for each sequence
+        # Group by grunnkrets and create pairs
+        X_data = []  # Single year inputs
+        y_data = []  # Target values
+        metadata = []  # Store metadata
         
-        sequence_counter = 0
-        grunnkrets_counter = 0
+        # Get all years in sorted order
+        all_years = sorted(df['year'].unique())
         
-        # Adjust sequence length based on available years
-        years_available = df['year'].nunique()
-        effective_seq_length = min(seq_length, years_available - 2)  # Ensure at least 2 sequences possible
-        
-        print(f"Years available: {years_available}, using effective sequence length: {effective_seq_length}")
-        
+        # For each grunnkrets
         for grunnkrets, group in filtered_df.groupby('grunnkretsnummer'):
-            try:
-                # Sort by year
-                group = group.sort_values('year')
+            group = group.sort_values('year')
+            
+            # For all consecutive year pairs
+            for i in range(len(all_years)-1):
+                year = all_years[i]
+                next_year = all_years[i+1]
                 
-                # Check if we have enough years of data
-                if len(group) < effective_seq_length + 1:
+                # Get data for current year and next year
+                current_data = group[group['year'] == year]
+                next_data = group[group['year'] == next_year]
+                
+                # Skip if either year is missing
+                if current_data.empty or next_data.empty:
                     continue
-                    
-                # Get feature values
-                feature_values = group[feature_cols].values
                 
-                # Make sure target column exists
-                if target_col in group:
-                    target_values = group[target_col].values
-                    year_values = group['year'].values
-                    kommune_values = group['kommunenummer'].values
-                    
-                    # Create multiple sequences per grunnkrets using a sliding window
-                    max_start_idx = len(group) - effective_seq_length
-                    
-                    sequences_this_grunnkrets = 0
-                    for i in range(max_start_idx):
-                        X_sequences.append(feature_values[i:i+effective_seq_length])
-                        y_sequences.append(target_values[i+effective_seq_length])
-                        
-                        # Store metadata
-                        metadata.append({
-                            'grunnkretsnummer': grunnkrets,
-                            'kommunenummer': kommune_values[i+effective_seq_length],
-                            'year': year_values[i+effective_seq_length],
-                            'sequence_id': f"{grunnkrets}_{i}"  # Add unique sequence identifier
-                        })
-                        sequence_counter += 1
-                        sequences_this_grunnkrets += 1
-                    
-                    if sequences_this_grunnkrets > 0:
-                        grunnkrets_counter += 1
-                        if grunnkrets_counter % 100 == 0 or grunnkrets_counter == 1:
-                            print(f"Processed {grunnkrets_counter} grunnkretser, created {sequence_counter} sequences")
+                # Get features for current year
+                feature_values = current_data[feature_cols].values[0]  # Just one row
                 
-            except Exception as e:
-                print(f"Error processing grunnkrets {grunnkrets}: {e}")
-                continue
+                # Get target value for next year
+                target_value = next_data[target_col].values[0]
+                
+                # Store data
+                X_data.append(feature_values)
+                y_data.append(target_value)
+                
+                # Store metadata
+                metadata.append({
+                    'grunnkretsnummer': grunnkrets,
+                    'kommunenummer': current_data['kommunenummer'].values[0],
+                    'year': next_year,  # Year of the target
+                    'sequence_id': f"{grunnkrets}_{year}"
+                })
         
         # Convert to numpy arrays
-        if X_sequences:
-            X = np.array(X_sequences)
-            y = np.array(y_sequences)
+        if X_data:
+            X = np.array(X_data)
+            y = np.array(y_data)
             metadata_df = pd.DataFrame(metadata)
             
-            print(f"Created {len(X)} sequences from {len(metadata_df['grunnkretsnummer'].unique())} grunnkretser")
+            print(f"Created {len(X)} input-target pairs from {len(metadata_df['grunnkretsnummer'].unique())} grunnkretser")
             print(f"X shape: {X.shape}, y shape: {y.shape}")
             
             return X, y, metadata_df, feature_cols
         else:
-            print("No sequences created. Check your data.")
+            print("No input-target pairs created. Check your data.")
             return None, None, None, None
     
     def split_data(self, X, y, metadata_df):

@@ -6,16 +6,16 @@ import os
 
 class ModelConfig:
     # Basic configuration
-    SEQ_LENGTH = 8  # Number of years for input sequence
-    BATCH_SIZE = 64  # Reduced from 128 for more gradient updates
-    EPOCHS = 150  # Increased from 100
-    EARLY_STOPPING_PATIENCE = 25  # Increased from 15
+    SEQ_LENGTH = 1  # SIMPLIFIED: Use only 1 year for input sequence (was 8)
+    BATCH_SIZE = 64
+    EPOCHS = 150
+    EARLY_STOPPING_PATIENCE = 25
     RANDOM_SEED = 42
     
-    # Model architecture
-    LSTM_UNITS = [256, 128, 64]
-    DENSE_UNITS = [64, 32, 1]
-    DROPOUT_RATES = [0.3, 0.3, 0.3, 0.2]
+    # Model architecture - SIMPLIFIED for single year input
+    LSTM_UNITS = [64, 32]  # Reduced complexity (was [256, 128, 64])
+    DENSE_UNITS = [32, 16, 1]  # Reduced complexity
+    DROPOUT_RATES = [0.2, 0.2, 0.2]  # Adjusted dropout
     
     # File paths
     MODEL_PATH = 'population_growth_model.h5'
