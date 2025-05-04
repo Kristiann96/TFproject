@@ -24,8 +24,6 @@ befolkning80Til84År
 befolkning85Til89År
 folketilvekstMenn
 folketilvekstKvinner
-growth_rate
-pop_change
 befolkning0Til04År_ratio
 befolkning05Til09År_ratio
 befolkning10Til14År_ratio
@@ -52,6 +50,8 @@ elderly_ratio
 working_age
 working_age_ratio
 gender_ratio
+growth_rate
+pop_change
 totalBefolkning_lag1
 growth_rate_lag1
 pop_change_lag1

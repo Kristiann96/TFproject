@@ -1,0 +1,1205 @@
+2025-05-04 10:50:52.759335: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-05-04 10:50:52.778367: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1746348652.797509   25739 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1746348652.805164   25739 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1746348652.822736   25739 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1746348652.822790   25739 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1746348652.822793   25739 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1746348652.822848   25739 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2025-05-04 10:50:52.827451: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Starting model training workflow...
+Found 1 GPUs: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+GPU is available for training
+Looking for population data files...
+Loading data from full_population_data.csv
+Loaded 126678 records.
+Data contains 9 years: [np.int64(2016), np.int64(2017), np.int64(2018), np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024)]
+Analyzing municipalities in the dataset...
+Found 838 municipalities in the dataset.
+
+Found 83 municipalities with data for all 9 years.
+
+Selected municipalities for analysis:
+                       name  records  grunnkretser  years   population
+kommunenummer                                                         
+1127              Randaberg       81             9      9  1245.419753
+301                    Oslo     5253           615      9  1178.531389
+1124                   Sola      234            26      9  1083.026667
+1103              Stavanger     2107           247      9   600.026718
+1532                  Giske      135            15      9   561.370370
+1121                   Time      315            35      9   544.774603
+1149                 Karmøy      711            79      9   536.957806
+1516                Ulstein      153            17      9   515.758389
+1122                Gjesdal      216            24      9   515.414286
+1120                  Klepp      351            39      9   508.418338
+1531                   Sula      171            19      9   490.631579
+1130                 Strand      239            27      9   489.062762
+1119                     Hå      378            42      9   456.457447
+1528              Sykkylven      153            17      9   448.535948
+1505           Kristiansund      513            57      9   425.097466
+1144                Kvitsøy       63             7      9    75.238095
+1838              Gildeskål      243            27      9    75.566524
+1839                 Beiarn      117            13      9    78.880342
+1816              Vevelstad       54             6      9    80.759259
+1836                  Rødøy      126            14      9    92.495726
+1811                 Bindal      135            15      9   100.289062
+1853                 Evenes      117            13      9   106.956140
+1848                Steigen      216            24      9   108.794393
+1815                   Vega       99            11      9   111.193878
+1826           Hattfjelldal      108            12      9   111.537037
+1867                     Bø      207            23      9   116.268657
+1874               Moskenes       81             9      9   119.447368
+1827                  Dønna       99            11      9   126.303030
+1859               Flakstad       90            10      9   127.000000
+1573                  Smøla      144            16      9   134.846154
+Saved information about selected municipalities to 'selected_municipalities.csv'
+
+Filtered dataset contains 12909 records from 30 municipalities.
+Preprocessing data...
+Dropped 154 rows with missing values in essential columns.
+/home/kristian/my_project/TFproject/data_pipeline.py:122: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['year'] = df['year'].astype(int)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+/home/kristian/my_project/TFproject/data_pipeline.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].replace([np.inf, -np.inf], np.nan)
+/home/kristian/my_project/TFproject/data_pipeline.py:136: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[col] = df[col].fillna(0)
+Creating all features...
+/home/kristian/my_project/TFproject/features.py:12: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[numeric_cols] = df[numeric_cols].fillna(0)
+Calculating age distribution ratios for 19 age groups...
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:20: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = np.where(df['totalBefolkning'] > 0,
+/home/kristian/my_project/TFproject/features.py:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_ratio'] = df[f'{col}_ratio'].clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:28: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['children_0_14'] = df[children_cols].sum(axis=1)
+/home/kristian/my_project/TFproject/features.py:29: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['children_ratio'] = (df['children_0_14'] / df['totalBefolkning'].replace(0, 1)).clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:33: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['elderly'] = df[elderly_cols].sum(axis=1)
+/home/kristian/my_project/TFproject/features.py:34: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['elderly_ratio'] = (df['elderly'] / df['totalBefolkning'].replace(0, 1)).clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:38: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['working_age'] = df[working_age_cols].sum(axis=1)
+/home/kristian/my_project/TFproject/features.py:39: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['working_age_ratio'] = (df['working_age'] / df['totalBefolkning'].replace(0, 1)).clip(0, 1)
+/home/kristian/my_project/TFproject/features.py:43: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['gender_ratio'] = np.where(df['antallKvinner'] > 0,
+/home/kristian/my_project/TFproject/features.py:47: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['gender_ratio'] = df['gender_ratio'].clip(0.5, 2)
+Creating time-based features...
+/home/kristian/my_project/TFproject/features.py:56: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['growth_rate'] = df.groupby(group_col)['totalBefolkning'].pct_change()
+/home/kristian/my_project/TFproject/features.py:58: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['growth_rate'] = df['growth_rate'].clip(-1, 5).fillna(0)
+/home/kristian/my_project/TFproject/features.py:61: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['pop_change'] = df.groupby(group_col)['totalBefolkning'].diff()
+/home/kristian/my_project/TFproject/features.py:64: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['pop_change'] = df['pop_change'].clip(-max_change, max_change).fillna(0)
+/home/kristian/my_project/TFproject/features.py:73: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df.groupby(group_col)[col].shift(1)
+/home/kristian/my_project/TFproject/features.py:74: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df[f'{col}_lag1'].fillna(0)
+/home/kristian/my_project/TFproject/features.py:73: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df.groupby(group_col)[col].shift(1)
+/home/kristian/my_project/TFproject/features.py:74: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df[f'{col}_lag1'].fillna(0)
+/home/kristian/my_project/TFproject/features.py:73: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df.groupby(group_col)[col].shift(1)
+/home/kristian/my_project/TFproject/features.py:74: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df[f'{col}_lag1'].fillna(0)
+/home/kristian/my_project/TFproject/features.py:73: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df.groupby(group_col)[col].shift(1)
+/home/kristian/my_project/TFproject/features.py:74: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df[f'{col}_lag1'] = df[f'{col}_lag1'].fillna(0)
+Feature engineering complete
+Finding grunnkretser with at least two consecutive years of data...
+Found 1479 grunnkretser with consecutive years of data
+Final count: 1479 grunnkretser
+Creating input-target pairs with target column: folketilvekst
+Using folketilvekst as target variable
+Using 57 features
+Sample features: ['statistikkÅr', 'totalBefolkning', 'antallMenn', 'antallKvinner', 'befolkning0Til04År', 'befolkning05Til09År', 'befolkning10Til14År', 'befolkning15Til19År', 'befolkning20Til24År', 'befolkning25Til29År']...
+Creating input-target pairs from 12755 filtered records...
+Created 11237 input-target pairs from 1479 grunnkretser
+X shape: (11237, 57), y shape: (11237,)
+Saved feature list to model_features.csv
+Splitting data into train, validation, and test sets...
+Train: 1035 grunnkretser
+Validation: 222 grunnkretser
+Test: 222 grunnkretser
+Training set: (7834, 57)
+Validation set: (1705, 57)
+Testing set: (1698, 57)
+Scaling the data...
+Training model...
+Building model with input shape (57,)
+/home/kristian/my_project/venv/lib/python3.12/site-packages/keras/src/layers/core/input_layer.py:27: UserWarning: Argument `input_shape` is deprecated. Use `shape` instead.
+  warnings.warn(
+I0000 00:00:1746348667.169683   25739 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 5564 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3070 Ti Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ dense (Dense)                   │ (None, 128)            │         7,424 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ batch_normalization             │ (None, 128)            │           512 │
+│ (BatchNormalization)            │                        │               │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (Dropout)               │ (None, 128)            │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 64)             │         8,256 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ batch_normalization_1           │ (None, 64)             │           256 │
+│ (BatchNormalization)            │                        │               │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_1 (Dropout)             │ (None, 64)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (Dense)                 │ (None, 32)             │         2,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ batch_normalization_2           │ (None, 32)             │           128 │
+│ (BatchNormalization)            │                        │               │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_2 (Dropout)             │ (None, 32)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_3 (Dense)                 │ (None, 1)              │            33 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 18,689 (73.00 KB)
+ Trainable params: 18,241 (71.25 KB)
+ Non-trainable params: 448 (1.75 KB)
+Training model for up to 150 epochs with batch size 64...
+Epoch 1/150
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1746348670.423741   25940 service.cc:152] XLA service 0x7f3678004220 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+I0000 00:00:1746348670.423805   25940 service.cc:160]   StreamExecutor device (0): NVIDIA GeForce RTX 3070 Ti Laptop GPU, Compute Capability 8.6
+2025-05-04 10:51:10.498168: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+I0000 00:00:1746348670.876381   25940 cuda_dnn.cc:529] Loaded cuDNN version 90300
+I0000 00:00:1746348672.923603   25940 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m9:12[0m 5s/step - loss: 17.3160 - mae: 1.7632[1m  9/123[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 6ms/step - loss: 27.6752 - mae: 1.9436 [1m 29/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 30.1272 - mae: 1.9933[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 27.5563 - mae: 1.9092[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 26.4239 - mae: 1.8616[1m 89/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 26.0636 - mae: 1.8327[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 25.7546 - mae: 1.8117[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 19ms/step - loss: 25.3984 - mae: 1.7959
+Epoch 1: val_loss improved from inf to 6.93758, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m8s[0m 25ms/step - loss: 25.3727 - mae: 1.7949 - val_loss: 6.9376 - val_mae: 0.9345 - learning_rate: 0.0010
+Epoch 2/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 3.9282 - mae: 1.3392[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 14.9018 - mae: 1.5592[1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 15.3358 - mae: 1.5585[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 15.0091 - mae: 1.5456[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 15.0080 - mae: 1.5394[1m 77/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 15.4857 - mae: 1.5416[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 15.9325 - mae: 1.5435[1m106/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 16.2247 - mae: 1.5462[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 16.3822 - mae: 1.5465
+Epoch 2: val_loss improved from 6.93758 to 6.35482, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 16.3953 - mae: 1.5463 - val_loss: 6.3548 - val_mae: 0.9103 - learning_rate: 0.0010
+Epoch 3/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 2.2063 - mae: 1.1140[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 13.6345 - mae: 1.4383[1m 30/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 13.8946 - mae: 1.4505[1m 45/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 13.5613 - mae: 1.4454[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 13.5305 - mae: 1.4433[1m 78/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 14.0847 - mae: 1.4501[1m 95/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 14.6204 - mae: 1.4581[1m110/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 14.9558 - mae: 1.4653
+Epoch 3: val_loss improved from 6.35482 to 6.16234, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m-2s[0m -15685us/step - loss: 15.1152 - mae: 1.4689 - val_loss: 6.1623 - val_mae: 0.8761 - learning_rate: 0.0010
+Epoch 4/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 2.7500 - mae: 1.2240[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.1246 - mae: 1.4701[1m 30/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 12.3749 - mae: 1.4591[1m 45/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 12.1942 - mae: 1.4433[1m 61/123[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.2430 - mae: 1.4371[1m 77/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.8343 - mae: 1.4404[1m 92/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 13.3007 - mae: 1.4445[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 13.6994 - mae: 1.4499[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 3ms/step - loss: 13.8976 - mae: 1.4518
+Epoch 4: val_loss improved from 6.16234 to 6.15415, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 13.9062 - mae: 1.4519 - val_loss: 6.1541 - val_mae: 0.9003 - learning_rate: 0.0010
+Epoch 5/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 1.9116 - mae: 0.9470[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.7195 - mae: 1.3913[1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.8145 - mae: 1.4124[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.6321 - mae: 1.4123[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.7983 - mae: 1.4158[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 13.3185 - mae: 1.4231[1m 94/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 13.7301 - mae: 1.4291[1m110/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 14.0328 - mae: 1.4359
+Epoch 5: val_loss improved from 6.15415 to 6.12926, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 14.1588 - mae: 1.4384 - val_loss: 6.1293 - val_mae: 0.9242 - learning_rate: 0.0010
+Epoch 6/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 1.8301 - mae: 0.9669[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.2309 - mae: 1.3722[1m 32/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.4053 - mae: 1.3907[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.1315 - mae: 1.3897[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.2737 - mae: 1.3900[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.7989 - mae: 1.3968[1m 94/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 13.2066 - mae: 1.4028[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 13.4868 - mae: 1.4084[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 3ms/step - loss: 13.6391 - mae: 1.4109
+Epoch 6: val_loss improved from 6.12926 to 5.99649, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 13.6448 - mae: 1.4110 - val_loss: 5.9965 - val_mae: 0.8928 - learning_rate: 0.0010
+Epoch 7/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.1999 - mae: 1.1227[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 11.1411 - mae: 1.3849[1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.7444 - mae: 1.4019[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.5885 - mae: 1.3960[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.6615 - mae: 1.3946[1m 80/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 12.1911 - mae: 1.3990[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 12.6546 - mae: 1.4062[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 12.9634 - mae: 1.4129
+Epoch 7: val_loss improved from 5.99649 to 5.86750, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 13.0630 - mae: 1.4148 - val_loss: 5.8675 - val_mae: 0.8903 - learning_rate: 0.0010
+Epoch 8/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.4996 - mae: 1.0725[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.0011 - mae: 1.3438[1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.1137 - mae: 1.3550[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.8674 - mae: 1.3496[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.0500 - mae: 1.3480[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.5447 - mae: 1.3542[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 11.9364 - mae: 1.3625[1m116/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 12.1899 - mae: 1.3698
+Epoch 8: val_loss did not improve from 5.86750
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 12.2506 - mae: 1.3713 - val_loss: 5.9800 - val_mae: 0.8964 - learning_rate: 0.0010
+Epoch 9/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 2.0153 - mae: 1.0064[1m 14/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 10.4369 - mae: 1.3661[1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.9124 - mae: 1.3738[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.7030 - mae: 1.3630[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.7870 - mae: 1.3602[1m 80/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.2705 - mae: 1.3652[1m 96/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 11.6678 - mae: 1.3723[1m113/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 11.9446 - mae: 1.3796
+Epoch 9: val_loss did not improve from 5.86750
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 12.0447 - mae: 1.3822 - val_loss: 6.1239 - val_mae: 0.9066 - learning_rate: 0.0010
+Epoch 10/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 1.9284 - mae: 1.0073[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.7699 - mae: 1.3478[1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.7012 - mae: 1.3537[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.4910 - mae: 1.3534[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.6239 - mae: 1.3553[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.0735 - mae: 1.3615[1m 94/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 11.4462 - mae: 1.3685[1m109/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 11.7171 - mae: 1.3754
+Epoch 10: val_loss did not improve from 5.86750
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 11.8663 - mae: 1.3794 - val_loss: 6.1566 - val_mae: 0.9412 - learning_rate: 0.0010
+Epoch 11/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 29ms/step - loss: 2.4869 - mae: 1.0321[1m 14/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 9.7427 - mae: 1.3522 [1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.3749 - mae: 1.3664[1m 48/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.2652 - mae: 1.3633[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.4184 - mae: 1.3659[1m 80/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.8052 - mae: 1.3721[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 11.1145 - mae: 1.3795[1m113/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 11.3245 - mae: 1.3864
+Epoch 11: val_loss did not improve from 5.86750
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 11.4035 - mae: 1.3889 - val_loss: 5.9071 - val_mae: 0.9154 - learning_rate: 0.0010
+Epoch 12/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.0656 - mae: 1.1473[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.9362 - mae: 1.3984[1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.8911 - mae: 1.4162[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.5894 - mae: 1.4092[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.7821 - mae: 1.4067[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.1498 - mae: 1.4088[1m101/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 11.4617 - mae: 1.4130[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 11.6224 - mae: 1.4155
+Epoch 12: val_loss improved from 5.86750 to 5.84579, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 11.6435 - mae: 1.4153 - val_loss: 5.8458 - val_mae: 0.9268 - learning_rate: 0.0010
+Epoch 13/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.4306 - mae: 1.0308[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.1832 - mae: 1.3819[1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.1870 - mae: 1.3846[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.8990 - mae: 1.3751 [1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.0422 - mae: 1.3742[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.4449 - mae: 1.3780[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 10.7594 - mae: 1.3828[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 10.9202 - mae: 1.3857
+Epoch 13: val_loss improved from 5.84579 to 5.78155, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 10.9505 - mae: 1.3859 - val_loss: 5.7816 - val_mae: 0.9347 - learning_rate: 0.0010
+Epoch 14/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.8616 - mae: 1.2003[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.2733 - mae: 1.4370[1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.0469 - mae: 1.4308[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.8545 - mae: 1.4234[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.0172 - mae: 1.4219[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 11.2628 - mae: 1.4236[1m 96/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 11.4403 - mae: 1.4252[1m111/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 11.5798 - mae: 1.4273
+Epoch 14: val_loss improved from 5.78155 to 5.75473, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 11.6349 - mae: 1.4269 - val_loss: 5.7547 - val_mae: 0.9545 - learning_rate: 0.0010
+Epoch 15/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 29ms/step - loss: 2.6106 - mae: 1.1314[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 9.5146 - mae: 1.3508 [1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.4893 - mae: 1.3512[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.2732 - mae: 1.3482[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.2939 - mae: 1.3494[1m 80/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.6679 - mae: 1.3593[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.9685 - mae: 1.3680[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 10.1604 - mae: 1.3746
+Epoch 15: val_loss improved from 5.75473 to 5.39876, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 10.2133 - mae: 1.3762 - val_loss: 5.3988 - val_mae: 0.9136 - learning_rate: 0.0010
+Epoch 16/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.2938 - mae: 1.0968[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.5704 - mae: 1.3671 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.7195 - mae: 1.3695[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.6097 - mae: 1.3652[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.8411 - mae: 1.3696[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.1356 - mae: 1.3763[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 9.3782 - mae: 1.3818[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 9.5177 - mae: 1.3866
+Epoch 16: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 9.5725 - mae: 1.3883 - val_loss: 5.8628 - val_mae: 0.9249 - learning_rate: 0.0010
+Epoch 17/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 2.8217 - mae: 1.2014[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.9224 - mae: 1.4412 [1m 32/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.2149 - mae: 1.4416[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.1392 - mae: 1.4311[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.2721 - mae: 1.4253[1m 82/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.5369 - mae: 1.4238[1m 98/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.7540 - mae: 1.4245[1m116/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 9.9128 - mae: 1.4266
+Epoch 17: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 9.9396 - mae: 1.4264 - val_loss: 6.0436 - val_mae: 0.9579 - learning_rate: 0.0010
+Epoch 18/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 1.9984 - mae: 1.0470[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.1314 - mae: 1.3650 [1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.8214 - mae: 1.4021[1m 48/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.7949 - mae: 1.4039[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.9385 - mae: 1.4034[1m 78/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.2193 - mae: 1.4076[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.4855 - mae: 1.4121[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 9.7223 - mae: 1.4173[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 3ms/step - loss: 9.8491 - mae: 1.4200
+Epoch 18: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 9.8542 - mae: 1.4201 - val_loss: 5.7985 - val_mae: 0.9570 - learning_rate: 0.0010
+Epoch 19/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 2.4977 - mae: 1.1960[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6197 - mae: 1.3726 [1m 32/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.2504 - mae: 1.4009[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.2411 - mae: 1.4005[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.4099 - mae: 1.3997[1m 80/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.7988 - mae: 1.4041[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.1251 - mae: 1.4100[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 9.3881 - mae: 1.4167
+Epoch 19: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 9.4749 - mae: 1.4186 - val_loss: 6.1216 - val_mae: 0.9251 - learning_rate: 0.0010
+Epoch 20/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.0940 - mae: 1.2227[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 10.0022 - mae: 1.4785[1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.8999 - mae: 1.4796 [1m 48/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.4906 - mae: 1.4658[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.3666 - mae: 1.4561[1m 78/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.4591 - mae: 1.4521[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.5442 - mae: 1.4506[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 9.6296 - mae: 1.4507[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 9.6683 - mae: 1.4493
+Epoch 20: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 9.6694 - mae: 1.4490 - val_loss: 5.5372 - val_mae: 0.9115 - learning_rate: 0.0010
+Epoch 21/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m6s[0m 49ms/step - loss: 2.8184 - mae: 1.1203[1m 13/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.0468 - mae: 1.3297 [1m 27/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.6447 - mae: 1.3918[1m 44/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.6896 - mae: 1.3968[1m 60/123[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.8066 - mae: 1.3964[1m 75/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.2151 - mae: 1.4007[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 8.5990 - mae: 1.4056[1m111/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 8.8650 - mae: 1.4109
+Epoch 21: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 8.9837 - mae: 1.4127 - val_loss: 5.8829 - val_mae: 0.9349 - learning_rate: 0.0010
+Epoch 22/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 1.7941 - mae: 1.0684[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.9231 - mae: 1.3723 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.1060 - mae: 1.3823[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.9477 - mae: 1.3819[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.1129 - mae: 1.3869[1m 78/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 9.3717 - mae: 1.3938[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 9.5545 - mae: 1.3989[1m111/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 9.6873 - mae: 1.4039
+Epoch 22: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 9.7265 - mae: 1.4058 - val_loss: 5.7346 - val_mae: 0.9191 - learning_rate: 0.0010
+Epoch 23/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 29ms/step - loss: 3.9326 - mae: 1.2524[1m 13/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.7570 - mae: 1.3901 [1m 25/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.4649 - mae: 1.4216[1m 39/123[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.4721 - mae: 1.4100[1m 54/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.3925 - mae: 1.4002[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.5506 - mae: 1.3978[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.7647 - mae: 1.3994[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 4ms/step - loss: 8.9195 - mae: 1.4021[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 4ms/step - loss: 9.0387 - mae: 1.4050
+Epoch 23: val_loss did not improve from 5.39876
+
+Epoch 23: ReduceLROnPlateau reducing learning rate to 0.0007000000332482159.
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 9.0843 - mae: 1.4056 - val_loss: 5.5161 - val_mae: 0.8780 - learning_rate: 0.0010
+Epoch 24/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 2.9947 - mae: 1.0420[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7803 - mae: 1.3975 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.9285 - mae: 1.4141[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7000 - mae: 1.4041[1m 63/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7009 - mae: 1.3971[1m 75/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.8672 - mae: 1.3957[1m 89/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.0270 - mae: 1.3966[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 4ms/step - loss: 8.1883 - mae: 1.3999[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 4ms/step - loss: 8.2834 - mae: 1.4015
+Epoch 24: val_loss did not improve from 5.39876
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 8.3081 - mae: 1.4014 - val_loss: 5.6475 - val_mae: 0.8929 - learning_rate: 7.0000e-04
+Epoch 25/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m4s[0m 40ms/step - loss: 2.9914 - mae: 1.1303[1m 13/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 6.2621 - mae: 1.3376 [1m 27/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 6.9131 - mae: 1.3658[1m 41/123[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 6.9187 - mae: 1.3616[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 6.9237 - mae: 1.3594[1m 61/123[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.1058 - mae: 1.3626[1m 77/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.4816 - mae: 1.3678[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 4ms/step - loss: 7.7683 - mae: 1.3720[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 4ms/step - loss: 7.9793 - mae: 1.3762[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 4ms/step - loss: 8.1088 - mae: 1.3788
+Epoch 25: val_loss improved from 5.39876 to 5.37835, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 8.1144 - mae: 1.3789 - val_loss: 5.3784 - val_mae: 0.9237 - learning_rate: 7.0000e-04
+Epoch 26/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 2.6984 - mae: 1.2549[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6417 - mae: 1.3991 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.8370 - mae: 1.4043[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7115 - mae: 1.3982[1m 62/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7128 - mae: 1.3976[1m 76/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.8933 - mae: 1.3998[1m 90/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.0546 - mae: 1.4001[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 4ms/step - loss: 8.1806 - mae: 1.4012[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 4ms/step - loss: 8.2761 - mae: 1.4023
+Epoch 26: val_loss improved from 5.37835 to 5.32386, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 8.3073 - mae: 1.4019 - val_loss: 5.3239 - val_mae: 0.8831 - learning_rate: 7.0000e-04
+Epoch 27/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 23ms/step - loss: 2.4525 - mae: 1.0928[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6416 - mae: 1.3712 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7599 - mae: 1.3847[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.5430 - mae: 1.3798[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6474 - mae: 1.3817[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.7881 - mae: 1.3840[1m105/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 7.9299 - mae: 1.3871[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 8.0018 - mae: 1.3887
+Epoch 27: val_loss did not improve from 5.32386
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 8.0055 - mae: 1.3888 - val_loss: 5.4461 - val_mae: 0.9030 - learning_rate: 7.0000e-04
+Epoch 28/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 4.9945 - mae: 1.3770[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5360 - mae: 1.4384 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.7261 - mae: 1.4287[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6467 - mae: 1.4111[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.8613 - mae: 1.4084[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0664 - mae: 1.4087[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.2319 - mae: 1.4098[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 7.3041 - mae: 1.4109
+Epoch 28: val_loss improved from 5.32386 to 5.22698, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 7.3530 - mae: 1.4112 - val_loss: 5.2270 - val_mae: 0.9030 - learning_rate: 7.0000e-04
+Epoch 29/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 2.4271 - mae: 1.1603[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4836 - mae: 1.3778 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.9841 - mae: 1.3977[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0500 - mae: 1.3907[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3849 - mae: 1.3925[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6761 - mae: 1.3970[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.9252 - mae: 1.4011[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 8.0862 - mae: 1.4040
+Epoch 29: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 8.1230 - mae: 1.4042 - val_loss: 5.3446 - val_mae: 0.9208 - learning_rate: 7.0000e-04
+Epoch 30/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 2.9899 - mae: 1.1678[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7442 - mae: 1.3767 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1793 - mae: 1.3970[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2906 - mae: 1.3950[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6048 - mae: 1.3949[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.8566 - mae: 1.3969[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.0530 - mae: 1.3990[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 7.1758 - mae: 1.4002
+Epoch 30: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.1894 - mae: 1.4002 - val_loss: 5.2330 - val_mae: 0.9120 - learning_rate: 7.0000e-04
+Epoch 31/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m4s[0m 33ms/step - loss: 3.7752 - mae: 1.2746[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9827 - mae: 1.4081 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1809 - mae: 1.4090[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3039 - mae: 1.4044[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5597 - mae: 1.4013[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.9098 - mae: 1.4028[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.1995 - mae: 1.4054[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 7.4154 - mae: 1.4085
+Epoch 31: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.4698 - mae: 1.4090 - val_loss: 5.3224 - val_mae: 0.8995 - learning_rate: 7.0000e-04
+Epoch 32/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 6.6835 - mae: 1.5328[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.2258 - mae: 1.4759 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 8.0886 - mae: 1.4576[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6711 - mae: 1.4316[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6637 - mae: 1.4218[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.8225 - mae: 1.4180[1m101/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.9712 - mae: 1.4168[1m119/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 8.0903 - mae: 1.4170
+Epoch 32: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 8.1032 - mae: 1.4165 - val_loss: 6.0343 - val_mae: 0.9052 - learning_rate: 7.0000e-04
+Epoch 33/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 6.1761 - mae: 1.3324[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.2483 - mae: 1.4183 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3148 - mae: 1.4056[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.1686 - mae: 1.3929[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3430 - mae: 1.3909[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4792 - mae: 1.3905[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.5912 - mae: 1.3921[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 7.6582 - mae: 1.3939
+Epoch 33: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.6598 - mae: 1.3939 - val_loss: 5.5379 - val_mae: 0.9003 - learning_rate: 7.0000e-04
+Epoch 34/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.1933 - mae: 1.1605[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0369 - mae: 1.4260 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4111 - mae: 1.4133[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.2499 - mae: 1.3934[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3584 - mae: 1.3871[1m 82/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4904 - mae: 1.3869[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.6184 - mae: 1.3883[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 7.7089 - mae: 1.3907
+Epoch 34: val_loss did not improve from 5.22698
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.7278 - mae: 1.3909 - val_loss: 5.5936 - val_mae: 0.8699 - learning_rate: 7.0000e-04
+Epoch 35/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 30ms/step - loss: 3.9103 - mae: 1.2025[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0820 - mae: 1.3988 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.1571 - mae: 1.4088[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.9233 - mae: 1.3976[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.9535 - mae: 1.3938[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0719 - mae: 1.3936[1m 95/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 7.1673 - mae: 1.3939[1m112/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 7.2525 - mae: 1.3969
+Epoch 35: val_loss improved from 5.22698 to 5.16514, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 7.2942 - mae: 1.3975 - val_loss: 5.1651 - val_mae: 0.9112 - learning_rate: 7.0000e-04
+Epoch 36/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 3.3553 - mae: 1.3387[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.1609 - mae: 1.4082 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3096 - mae: 1.4178[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3351 - mae: 1.4141[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4881 - mae: 1.4116[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6103 - mae: 1.4089[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 7.6888 - mae: 1.4078[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 7.7369 - mae: 1.4075
+Epoch 36: val_loss did not improve from 5.16514
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.7408 - mae: 1.4068 - val_loss: 5.6088 - val_mae: 0.8694 - learning_rate: 7.0000e-04
+Epoch 37/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 6.1142 - mae: 1.3607[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1294 - mae: 1.3870 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1741 - mae: 1.3752[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1117 - mae: 1.3605[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3169 - mae: 1.3604[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5335 - mae: 1.3633[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.7642 - mae: 1.3681[1m120/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.9297 - mae: 1.3734
+Epoch 37: val_loss improved from 5.16514 to 5.04797, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 5ms/step - loss: 6.9530 - mae: 1.3741 - val_loss: 5.0480 - val_mae: 0.8829 - learning_rate: 7.0000e-04
+Epoch 38/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.0515 - mae: 1.2131[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4938 - mae: 1.3736 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0738 - mae: 1.3873[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1811 - mae: 1.3837[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4056 - mae: 1.3821[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6243 - mae: 1.3848[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.7701 - mae: 1.3866[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.8568 - mae: 1.3888
+Epoch 38: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.8720 - mae: 1.3889 - val_loss: 5.5704 - val_mae: 0.8785 - learning_rate: 7.0000e-04
+Epoch 39/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 30ms/step - loss: 3.0955 - mae: 1.2534[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2555 - mae: 1.3466 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6742 - mae: 1.3713[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6922 - mae: 1.3723[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.8929 - mae: 1.3765[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.0601 - mae: 1.3813[1m 94/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 7.1720 - mae: 1.3840[1m109/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 7.2560 - mae: 1.3867
+Epoch 39: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.2825 - mae: 1.3872 - val_loss: 5.7349 - val_mae: 0.8732 - learning_rate: 7.0000e-04
+Epoch 40/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 4.9889 - mae: 1.3227[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6929 - mae: 1.4351 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6712 - mae: 1.4146[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6222 - mae: 1.3927[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.8412 - mae: 1.3830[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0505 - mae: 1.3810[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.1965 - mae: 1.3805[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.3472 - mae: 1.3833
+Epoch 40: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.3868 - mae: 1.3835 - val_loss: 5.7075 - val_mae: 0.8657 - learning_rate: 7.0000e-04
+Epoch 41/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 32ms/step - loss: 2.8388 - mae: 1.0202[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2138 - mae: 1.3456 [1m 32/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2933 - mae: 1.3661[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1904 - mae: 1.3636[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2773 - mae: 1.3654[1m 82/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4456 - mae: 1.3721[1m 96/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5439 - mae: 1.3764[1m112/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 6.6305 - mae: 1.3817
+Epoch 41: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.6643 - mae: 1.3840 - val_loss: 5.4607 - val_mae: 0.8838 - learning_rate: 7.0000e-04
+Epoch 42/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.2888 - mae: 1.0151[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6035 - mae: 1.3677 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9919 - mae: 1.3691[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2559 - mae: 1.3686[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5631 - mae: 1.3735[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.7130 - mae: 1.3770[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.8343 - mae: 1.3802[1m120/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.9326 - mae: 1.3829
+Epoch 42: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.9447 - mae: 1.3830 - val_loss: 5.6220 - val_mae: 0.8710 - learning_rate: 7.0000e-04
+Epoch 43/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.5834 - mae: 1.0835[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.8972 - mae: 1.3499 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1758 - mae: 1.3636[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0884 - mae: 1.3578[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1601 - mae: 1.3582[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3159 - mae: 1.3630[1m 98/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4934 - mae: 1.3671[1m113/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 6.6472 - mae: 1.3708
+Epoch 43: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.7307 - mae: 1.3724 - val_loss: 5.0500 - val_mae: 0.9033 - learning_rate: 7.0000e-04
+Epoch 44/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 25ms/step - loss: 5.0035 - mae: 1.3596[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0068 - mae: 1.4304 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3545 - mae: 1.4307[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2683 - mae: 1.4169[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3213 - mae: 1.4092[1m 82/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5349 - mae: 1.4070[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.6644 - mae: 1.4058[1m116/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 6.7451 - mae: 1.4056
+Epoch 44: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.7669 - mae: 1.4052 - val_loss: 5.8878 - val_mae: 0.8540 - learning_rate: 7.0000e-04
+Epoch 45/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 3.4944 - mae: 1.3731[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4264 - mae: 1.4754 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.1774 - mae: 1.4440[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9466 - mae: 1.4158[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0486 - mae: 1.4024[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2569 - mae: 1.3987[1m 98/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 6.3854 - mae: 1.3973[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 6.5107 - mae: 1.3983
+Epoch 45: val_loss did not improve from 5.04797
+
+Epoch 45: ReduceLROnPlateau reducing learning rate to 0.0004900000232737511.
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.5566 - mae: 1.3978 - val_loss: 5.9264 - val_mae: 0.8722 - learning_rate: 7.0000e-04
+Epoch 46/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 2.1631 - mae: 1.1332[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6868 - mae: 1.3552 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0881 - mae: 1.3789[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2124 - mae: 1.3808[1m 66/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4210 - mae: 1.3814[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6168 - mae: 1.3823[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.7317 - mae: 1.3829[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.8150 - mae: 1.3844
+Epoch 46: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.8338 - mae: 1.3841 - val_loss: 5.6872 - val_mae: 0.8759 - learning_rate: 4.9000e-04
+Epoch 47/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 7.6504 - mae: 1.5809[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4285 - mae: 1.4714 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2450 - mae: 1.4306[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0967 - mae: 1.4099[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.2519 - mae: 1.4044[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4157 - mae: 1.4040[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.5396 - mae: 1.4033[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.6192 - mae: 1.4033
+Epoch 47: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.6410 - mae: 1.4028 - val_loss: 5.8698 - val_mae: 0.8767 - learning_rate: 4.9000e-04
+Epoch 48/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 3.3885 - mae: 1.2293[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 8.0220 - mae: 1.4683 [1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.6852 - mae: 1.4609[1m 45/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 7.5216 - mae: 1.4521[1m 62/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4105 - mae: 1.4407[1m 79/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.4675 - mae: 1.4369[1m 96/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 7.5281 - mae: 1.4339[1m113/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 7.5617 - mae: 1.4318
+Epoch 48: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 7.5536 - mae: 1.4294 - val_loss: 5.7859 - val_mae: 0.8484 - learning_rate: 4.9000e-04
+Epoch 49/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.5668 - mae: 1.3997[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5445 - mae: 1.3799 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6432 - mae: 1.3683[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6216 - mae: 1.3603[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.8102 - mae: 1.3609[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9400 - mae: 1.3630[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.0511 - mae: 1.3660[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.1281 - mae: 1.3677
+Epoch 49: val_loss did not improve from 5.04797
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.1323 - mae: 1.3677 - val_loss: 5.6253 - val_mae: 0.8578 - learning_rate: 4.9000e-04
+Epoch 50/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 26ms/step - loss: 2.8014 - mae: 1.1591[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6544 - mae: 1.3979 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6563 - mae: 1.3836[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6218 - mae: 1.3717[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.8152 - mae: 1.3677[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0145 - mae: 1.3694[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.1834 - mae: 1.3721[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.3096 - mae: 1.3742
+Epoch 50: val_loss improved from 5.04797 to 4.79618, saving model to population_growth_model_enhanced.h5
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.3259 - mae: 1.3744 - val_loss: 4.7962 - val_mae: 0.8626 - learning_rate: 4.9000e-04
+Epoch 51/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 23ms/step - loss: 2.8278 - mae: 1.0828[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4449 - mae: 1.3512 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7045 - mae: 1.3754[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6572 - mae: 1.3697[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7970 - mae: 1.3696[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9028 - mae: 1.3719[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.0211 - mae: 1.3747[1m118/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.1056 - mae: 1.3774
+Epoch 51: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.1217 - mae: 1.3775 - val_loss: 4.9146 - val_mae: 0.8557 - learning_rate: 4.9000e-04
+Epoch 52/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 1.6418 - mae: 0.9996[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5913 - mae: 1.3318 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7980 - mae: 1.3502[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6632 - mae: 1.3421[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7673 - mae: 1.3441[1m 78/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9232 - mae: 1.3484[1m 93/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0431 - mae: 1.3513[1m110/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 6.1412 - mae: 1.3541
+Epoch 52: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.1941 - mae: 1.3550 - val_loss: 5.8025 - val_mae: 0.8559 - learning_rate: 4.9000e-04
+Epoch 53/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 3.7699 - mae: 1.1454[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6307 - mae: 1.3525 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6005 - mae: 1.3557[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5269 - mae: 1.3431[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7442 - mae: 1.3413[1m 86/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9352 - mae: 1.3430[1m103/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.0657 - mae: 1.3446[1m120/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.1505 - mae: 1.3456
+Epoch 53: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.1609 - mae: 1.3455 - val_loss: 4.8517 - val_mae: 0.8416 - learning_rate: 4.9000e-04
+Epoch 54/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 2.9121 - mae: 1.2584[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.9801 - mae: 1.3570 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1029 - mae: 1.3553[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1662 - mae: 1.3531[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3864 - mae: 1.3561[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5500 - mae: 1.3580[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.6836 - mae: 1.3595[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.8097 - mae: 1.3621
+Epoch 54: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.8425 - mae: 1.3623 - val_loss: 5.8463 - val_mae: 0.8431 - learning_rate: 4.9000e-04
+Epoch 55/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 5.2725 - mae: 1.3632[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 5.6841 - mae: 1.3837 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6516 - mae: 1.3687[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5131 - mae: 1.3530[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6095 - mae: 1.3501[1m 82/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6925 - mae: 1.3518[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.8079 - mae: 1.3541[1m116/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.9083 - mae: 1.3570
+Epoch 55: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.9371 - mae: 1.3577 - val_loss: 5.6044 - val_mae: 0.8283 - learning_rate: 4.9000e-04
+Epoch 56/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m5s[0m 45ms/step - loss: 3.3829 - mae: 1.3253[1m 14/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 4.8561 - mae: 1.3161 [1m 31/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 5.1176 - mae: 1.3280[1m 48/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0403 - mae: 1.3196[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2336 - mae: 1.3234[1m 81/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4336 - mae: 1.3294[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5669 - mae: 1.3336[1m112/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.6829 - mae: 1.3381
+Epoch 56: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.7500 - mae: 1.3400 - val_loss: 5.4942 - val_mae: 0.8425 - learning_rate: 4.9000e-04
+Epoch 57/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 3.7276 - mae: 1.3175[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9478 - mae: 1.4276 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9698 - mae: 1.4139[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.8877 - mae: 1.3983[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.9580 - mae: 1.3893[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0144 - mae: 1.3853[1m101/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.0973 - mae: 1.3831[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.1682 - mae: 1.3827
+Epoch 57: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.1836 - mae: 1.3818 - val_loss: 5.8001 - val_mae: 0.8380 - learning_rate: 4.9000e-04
+Epoch 58/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 2.3027 - mae: 1.1330[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1921 - mae: 1.3175 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5865 - mae: 1.3351[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5375 - mae: 1.3298[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6821 - mae: 1.3318[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7589 - mae: 1.3338[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.8404 - mae: 1.3371[1m119/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.8914 - mae: 1.3391
+Epoch 58: val_loss did not improve from 4.79618
+
+Epoch 58: ReduceLROnPlateau reducing learning rate to 0.00034300000406801696.
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.8961 - mae: 1.3390 - val_loss: 5.6218 - val_mae: 0.8374 - learning_rate: 4.9000e-04
+Epoch 59/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.0122 - mae: 1.0130[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4411 - mae: 1.3082 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3973 - mae: 1.3084[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4105 - mae: 1.3085[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6130 - mae: 1.3121[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7370 - mae: 1.3145[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.8508 - mae: 1.3170[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.9168 - mae: 1.3188
+Epoch 59: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.9224 - mae: 1.3189 - val_loss: 5.7808 - val_mae: 0.8339 - learning_rate: 3.4300e-04
+Epoch 60/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 3.8501 - mae: 1.3416[1m 19/123[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 7.3625 - mae: 1.4477 [1m 37/123[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.9570 - mae: 1.4209[1m 54/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.6266 - mae: 1.4036[1m 71/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.5429 - mae: 1.3943[1m 88/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.4788 - mae: 1.3880[1m106/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 6.4441 - mae: 1.3836[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 6.4055 - mae: 1.3795
+Epoch 60: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.3989 - mae: 1.3789 - val_loss: 5.4664 - val_mae: 0.8456 - learning_rate: 3.4300e-04
+Epoch 61/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 30ms/step - loss: 3.7471 - mae: 1.4126[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0385 - mae: 1.4011 
+Epoch 61: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m-2s[0m -16249us/step - loss: 5.6251 - mae: 1.3615 - val_loss: 5.4593 - val_mae: 0.8318 - learning_rate: 3.4300e-04
+Epoch 62/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 4.2774 - mae: 1.2974[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6246 - mae: 1.4088 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5433 - mae: 1.3896[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5004 - mae: 1.3707[1m 71/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5988 - mae: 1.3621[1m 88/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7598 - mae: 1.3596[1m106/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 5.9270 - mae: 1.3599[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 3ms/step - loss: 6.0255 - mae: 1.3598
+Epoch 62: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.0294 - mae: 1.3597 - val_loss: 5.1818 - val_mae: 0.8359 - learning_rate: 3.4300e-04
+Epoch 63/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 4.3383 - mae: 1.4136[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.9823 - mae: 1.3754 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0740 - mae: 1.3595[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1733 - mae: 1.3484[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3581 - mae: 1.3450[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5036 - mae: 1.3451[1m102/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.6142 - mae: 1.3464[1m119/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.7104 - mae: 1.3484
+Epoch 63: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.7255 - mae: 1.3483 - val_loss: 5.4739 - val_mae: 0.8290 - learning_rate: 3.4300e-04
+Epoch 64/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 24ms/step - loss: 2.6658 - mae: 1.1767[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1090 - mae: 1.3247 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2926 - mae: 1.3347[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4198 - mae: 1.3374[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5751 - mae: 1.3423[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6850 - mae: 1.3469[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.7932 - mae: 1.3498[1m121/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.8597 - mae: 1.3513
+Epoch 64: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.8656 - mae: 1.3514 - val_loss: 5.2173 - val_mae: 0.8349 - learning_rate: 3.4300e-04
+Epoch 65/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 2.3874 - mae: 1.1000[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.8537 - mae: 1.3456 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0221 - mae: 1.3473[1m 53/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1356 - mae: 1.3439[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4190 - mae: 1.3480[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5925 - mae: 1.3529[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.7063 - mae: 1.3547[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.7822 - mae: 1.3565
+Epoch 65: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.8154 - mae: 1.3567 - val_loss: 5.6345 - val_mae: 0.8425 - learning_rate: 3.4300e-04
+Epoch 66/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 31ms/step - loss: 2.8100 - mae: 1.1484[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.5780 - mae: 1.3144 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.8234 - mae: 1.3296[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.8606 - mae: 1.3220[1m 68/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0498 - mae: 1.3215[1m 85/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1787 - mae: 1.3234[1m101/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.2906 - mae: 1.3250[1m119/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.3784 - mae: 1.3269
+Epoch 66: val_loss did not improve from 4.79618
+
+Epoch 66: ReduceLROnPlateau reducing learning rate to 0.00024009999469853935.
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.3934 - mae: 1.3270 - val_loss: 5.3733 - val_mae: 0.8360 - learning_rate: 3.4300e-04
+Epoch 67/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 2.6617 - mae: 1.1346[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0338 - mae: 1.3181 [1m 35/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.9869 - mae: 1.3163[1m 52/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.9470 - mae: 1.3064[1m 70/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2314 - mae: 1.3074[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3741 - mae: 1.3103[1m105/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 5.4964 - mae: 1.3132[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.5782 - mae: 1.3156
+Epoch 67: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.5844 - mae: 1.3158 - val_loss: 5.0983 - val_mae: 0.8265 - learning_rate: 2.4010e-04
+Epoch 68/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 31ms/step - loss: 4.0010 - mae: 1.3159[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4235 - mae: 1.4592 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4878 - mae: 1.4428[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.6085 - mae: 1.4239[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.7571 - mae: 1.4114[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 6.0337 - mae: 1.4059[1m 99/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 6.1889 - mae: 1.4009[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 6.2917 - mae: 1.3978
+Epoch 68: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 6.3216 - mae: 1.3955 - val_loss: 5.7092 - val_mae: 0.8298 - learning_rate: 2.4010e-04
+Epoch 69/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 23ms/step - loss: 5.2380 - mae: 1.4924[1m 18/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4615 - mae: 1.4407 [1m 36/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4601 - mae: 1.4141[1m 54/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3875 - mae: 1.3915[1m 72/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4751 - mae: 1.3825[1m 89/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5301 - mae: 1.3781[1m106/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 5.5896 - mae: 1.3751
+Epoch 69: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.6405 - mae: 1.3734 - val_loss: 5.6816 - val_mae: 0.8207 - learning_rate: 2.4010e-04
+Epoch 70/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 27ms/step - loss: 3.8156 - mae: 1.2654[1m 16/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 5.3407 - mae: 1.3509 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3513 - mae: 1.3495[1m 51/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2975 - mae: 1.3378[1m 69/123[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3588 - mae: 1.3304[1m 87/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4261 - mae: 1.3287[1m104/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.4905 - mae: 1.3289[1m122/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.5443 - mae: 1.3296
+Epoch 70: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.5475 - mae: 1.3296 - val_loss: 5.3948 - val_mae: 0.8380 - learning_rate: 2.4010e-04
+Epoch 71/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 3.6605 - mae: 1.3390[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2898 - mae: 1.4100 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2176 - mae: 1.3833[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0789 - mae: 1.3558[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2228 - mae: 1.3473[1m 84/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3471 - mae: 1.3433[1m 98/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4505 - mae: 1.3415[1m115/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.5595 - mae: 1.3411
+Epoch 71: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.5982 - mae: 1.3405 - val_loss: 5.4483 - val_mae: 0.8449 - learning_rate: 2.4010e-04
+Epoch 72/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m17s[0m 146ms/step - loss: 5.0043 - mae: 1.4573[1m  9/123[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 6ms/step - loss: 4.0397 - mae: 1.2969   [1m 26/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 4.9957 - mae: 1.3416[1m 42/123[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 4.9672 - mae: 1.3211[1m 59/123[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 4.9800 - mae: 1.3100[1m 76/123[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1106 - mae: 1.3100[1m 91/123[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2035 - mae: 1.3113[1m108/123[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 3ms/step - loss: 5.3020 - mae: 1.3139
+Epoch 72: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.3481 - mae: 1.3149 - val_loss: 5.3530 - val_mae: 0.8275 - learning_rate: 2.4010e-04
+Epoch 73/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 25ms/step - loss: 3.0963 - mae: 1.2312[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.3920 - mae: 1.3080 [1m 34/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.7147 - mae: 1.3138[1m 50/123[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 4.7731 - mae: 1.3112[1m 67/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.0144 - mae: 1.3158[1m 83/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.1711 - mae: 1.3212[1m100/123[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 3ms/step - loss: 5.2673 - mae: 1.3244[1m117/123[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 3ms/step - loss: 5.3282 - mae: 1.3260
+Epoch 73: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.3419 - mae: 1.3261 - val_loss: 5.7823 - val_mae: 0.8192 - learning_rate: 2.4010e-04
+Epoch 74/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 2.5923 - mae: 1.1361[1m 15/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 5.0150 - mae: 1.3487 [1m 30/123[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m0s[0m 4ms/step - loss: 5.2520 - mae: 1.3535[1m 47/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2268 - mae: 1.3399[1m 64/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3515 - mae: 1.3352[1m 81/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4751 - mae: 1.3356[1m 97/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5529 - mae: 1.3349[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.6058 - mae: 1.3346
+Epoch 74: val_loss did not improve from 4.79618
+
+Epoch 74: ReduceLROnPlateau reducing learning rate to 0.00016806999628897755.
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.6212 - mae: 1.3338 - val_loss: 5.2922 - val_mae: 0.8342 - learning_rate: 2.4010e-04
+Epoch 75/150
+[1m  1/123[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m3s[0m 28ms/step - loss: 4.3008 - mae: 1.3594[1m 17/123[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2499 - mae: 1.3830 [1m 33/123[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.2559 - mae: 1.3570[1m 49/123[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.3129 - mae: 1.3476[1m 65/123[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.4228 - mae: 1.3446[1m 81/123[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5094 - mae: 1.3451[1m 98/123[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 3ms/step - loss: 5.5867 - mae: 1.3456[1m114/123[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 3ms/step - loss: 5.6610 - mae: 1.3473
+Epoch 75: val_loss did not improve from 4.79618
+[1m123/123[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step - loss: 5.6925 - mae: 1.3475 - val_loss: 5.6158 - val_mae: 0.8250 - learning_rate: 1.6807e-04
+Epoch 75: early stopping
+Restoring model weights from the end of the best epoch: 50.
+WARNING:absl:You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+Saved model to 'population_growth_model.h5'
+Saved training history plot to 'training_history_v1_.png'
+Evaluating model on test set...
+[1m 1/54[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m23s[0m 438ms/step[1m36/54[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 1ms/step   [1m54/54[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 31ms/step[1m54/54[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m2s[0m 31ms/step
+Test MAE: 41.9854
+Test MSE: 15914.4092
+Test RMSE: 126.1523
+Saved detailed prediction results to 'v1_prediction_results.csv'
+Saved predictions vs actual plot to 'v1_predictions_vs_actual.png'
+
+Prediction Error by Municipality:
+                abs_error                   error      actual      
+                     mean         std        mean        mean count
+kommunenummer                                                      
+1836             4.581356         NaN    4.581356    0.000000     1
+1848             7.035418    6.468843    0.190099   -5.625000    16
+1859             7.203738    4.330604    1.790804   -5.750000     8
+1816             7.810221    7.258868    3.958190   -5.125000     8
+1122             9.011151    7.128806   -4.285863    4.750000    16
+1573             9.533190    8.008228   -2.747121  -12.250000     8
+1838            10.791953    7.829918   -5.526409   -2.281250    32
+1528            12.071851   11.509232   -9.226386  -21.062500    16
+1815            14.304972   11.461428   -4.513251   -4.347826    23
+1826            14.367058   12.120977   -9.173468  -29.062500    16
+1839            15.319767    4.083514  -15.319767    0.000000     8
+1827            16.461098    6.973012   -3.585624    7.250000    16
+1119            18.251339   30.413984    2.891794   24.150000    60
+1149            18.730433   22.056458    3.849098    9.493056   144
+1130            19.560231   25.857433    9.057180   23.930556    72
+1505            19.934434   17.601727   -4.489876   -1.916667    72
+1811            22.211932   13.942131   -7.316718   -3.500000    16
+1121            23.272917   16.132872   -1.375549   12.416667    24
+1532            24.316501   27.425580   19.566734   43.187500    16
+1531            24.359374   19.586064   10.707839   45.000000    24
+1516            24.388092   33.038137   -5.563404   -4.125000    16
+1103            29.742889   59.213504    6.062257   31.000000   236
+1120            30.969752   38.436113   15.767409   45.875000    56
+1124            31.717780   45.273971  -13.211070  -11.291667    24
+1874            45.186121   41.908013  -19.465702    0.000000     5
+1144            56.277586   26.304161  -56.277586   -1.500000     8
+301             63.909354  169.034068    4.042990   55.483029   717
+1127            70.433594  204.941546   61.923212  115.812500    16
+1867           137.311125  178.394563  114.425398   -5.375000    24
+Saved error by municipality plot to 'v1_error_by_municipality.png'
+Saved error distribution plot to 'v1_error_distribution.png'
+Saved error boxplot to 'v1_error_boxplot.png'
+Saved model metadata to 'web_deployment/features.csv' and 'web_deployment/model_info.json'
+Saved scalers to 'web_deployment/feature_scaler.pkl' and 'web_deployment/target_scaler.pkl'
+Comparing model performance: prediction_results.csv vs v1_prediction_results.csv
+
+Model Comparison:
+Metric     Original   New        Difference Improvement
+------------------------------------------------------------
+MAE        28.8929    41.9854    -13.0925   -45.31    %
+RMSE       47.9804    126.1523   -78.1719   -162.92   %
+Size       352        1698       1346       382.39    %
+Saved model comparison plot to 'model_comparison_by_kommune.png'
+
+The new model has different performance characteristics.
+🌲 Try https://ydf.readthedocs.io, the successor of TensorFlow Decision Forests with more features and faster training!
+Converting model population_growth_model.h5 to TensorFlow.js format
+Failed to load model: Could not locate function 'mse'. Make sure custom classes are decorated with `@keras.saving.register_keras_serializable()`. Full object config: {'module': 'keras.metrics', 'class_name': 'function', 'config': 'mse', 'registered_name': 'mse'}
+
+Model training workflow completed successfully!
+train_model_workflow completed in 61.61 seconds
