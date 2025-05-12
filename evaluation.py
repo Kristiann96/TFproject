@@ -21,10 +21,10 @@ def plot_training_history(history, output_file='training_history.png'):
     plt.ylabel('Loss')
     plt.legend()
     
-    # Plot training and validation MAE
+    # Update these lines to use 'mean_absolute_error' instead of 'mae'
     plt.subplot(1, 2, 2)
-    plt.plot(history.history['mae'], label='Training MAE')
-    plt.plot(history.history['val_mae'], label='Validation MAE')
+    plt.plot(history.history['mean_absolute_error'], label='Training MAE')  # Changed from 'mae'
+    plt.plot(history.history['val_mean_absolute_error'], label='Validation MAE')  # Changed from 'val_mae'
     plt.title('Model MAE')
     plt.xlabel('Epoch')
     plt.ylabel('MAE')

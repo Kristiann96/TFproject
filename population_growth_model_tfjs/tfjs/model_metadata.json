@@ -1,6 +1,6 @@
 {
   "input_shape": [
-    5,
+    1,
     57
   ],
   "feature_names": [
@@ -29,8 +29,6 @@
     "befolkning85Til89\u00c5r",
     "folketilvekstMenn",
     "folketilvekstKvinner",
-    "growth_rate",
-    "pop_change",
     "befolkning0Til04\u00c5r_ratio",
     "befolkning05Til09\u00c5r_ratio",
     "befolkning10Til14\u00c5r_ratio",
@@ -57,6 +55,8 @@
     "working_age",
     "working_age_ratio",
     "gender_ratio",
+    "growth_rate",
+    "pop_change",
     "totalBefolkning_lag1",
     "growth_rate_lag1",
     "pop_change_lag1",

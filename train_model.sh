@@ -4,7 +4,7 @@
 # ----------------------------------------------
 
 # Configuration
-OUTPUT_PREFIX="v1_"
+OUTPUT_PREFIX="1year_"
 MUNICIPALITIES=30
 MIN_SEQUENCES=1000
 LOG_FILE="training_$(date +%Y%m%d_%H%M%S).log"

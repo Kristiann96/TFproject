@@ -12,8 +12,7 @@ from data_pipeline import DataPipeline
 from model import PopulationGrowthModel
 from evaluation import plot_training_history, evaluate_model, compare_models
 from prediction import PopulationPredictor
-from utils import timing_decorator, check_gpu_availability, save_model_metadata, save_scalers, convert_to_tfjs
-
+from utils import simple_convert_to_tfjs, timing_decorator, check_gpu_availability, save_model_metadata, save_scalers, convert_to_tfjs, convert_to_tfjs_saved_model
 @timing_decorator
 def train_model_workflow(args):
     """Full workflow for training the model"""
@@ -117,7 +116,7 @@ def train_model_workflow(args):
     
     # Convert model to TensorFlow.js
     if args.convert_to_js:
-        convert_to_tfjs(
+        simple_convert_to_tfjs(
             config.MODEL_PATH, 
             config.TFJS_MODEL_DIR,
             feature_cols=feature_cols,

@@ -6,7 +6,7 @@ import os
 
 class ModelConfig:
     # Basic configuration
-    SEQ_LENGTH = 1  # SIMPLIFIED: Use only 1 year for input sequence (was 8)
+    SEQ_LENGTH = 1 # 1 year input
     BATCH_SIZE = 64
     EPOCHS = 150
     EARLY_STOPPING_PATIENCE = 25

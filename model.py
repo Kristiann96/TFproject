@@ -53,7 +53,12 @@ class PopulationGrowthModel:
         # Use a lower initial learning rate
         optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
         
-        model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
+        # Use explicit loss and metric objects for better compatibility
+        model.compile(
+            optimizer=optimizer, 
+            loss=tf.keras.losses.MeanSquaredError(), 
+            metrics=[tf.keras.metrics.MeanAbsoluteError()]
+        )
         model.summary()
         
         self.model = model
@@ -153,9 +158,17 @@ class PopulationGrowthModel:
             verbose=1
         )
         
-        # Save model
-        self.model.save(self.config.MODEL_PATH)
-        print(f"Saved model to '{self.config.MODEL_PATH}'")
+        # Save model in Keras 3 native format
+        keras_model_path = self.config.MODEL_PATH.replace('.h5', '.keras')
+        self.model.save(keras_model_path)
+        print(f"Saved model to '{keras_model_path}'")
+        
+        # Also save as HDF5 for backward compatibility
+        try:
+            self.model.save(self.config.MODEL_PATH, save_format='h5')
+            print(f"Also saved model in legacy HDF5 format to '{self.config.MODEL_PATH}'")
+        except Exception as e:
+            print(f"Note: Could not save in legacy HDF5 format: {e}")
         
         return history
     
@@ -189,8 +202,8 @@ class PopulationGrowthModel:
                 self.model = tf.keras.models.load_model(
                     model_path,
                     custom_objects={
-                        'mse': tf.keras.losses.mean_squared_error,
-                        'mae': tf.keras.metrics.mean_absolute_error
+                        'MeanSquaredError': tf.keras.losses.MeanSquaredError,
+                        'MeanAbsoluteError': tf.keras.metrics.MeanAbsoluteError
                     }
                 )
                 print("Model loaded with custom objects.")

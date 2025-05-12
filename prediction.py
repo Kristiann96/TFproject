@@ -39,8 +39,8 @@ class PopulationPredictor:
         """Load the most recent population data"""
         print("Loading latest population data...")
         
-        # Try to find latest data file (2024)
-        latest_csv_file = "Befolkingsdata_formatert/Befolkning_0000_Norge_25833_BefolkningPaGrunnkretsniva2024.csv"
+        # Try to find latest data file
+        latest_csv_file = "Befolkingsdata_formatert/populasjon_grunkrets_agder_2024.csv"
         
         if not os.path.exists(latest_csv_file):
             # Try to find any population CSV file
@@ -59,6 +59,17 @@ class PopulationPredictor:
         try:
             latest_data = pd.read_csv(latest_csv_file)
             print(f"Loaded {len(latest_data)} records from {latest_csv_file}")
+            
+            # Make sure 'year' column exists - create from statistikkÅr if needed
+            if 'year' not in latest_data.columns and 'statistikkÅr' in latest_data.columns:
+                print("Creating 'year' column from 'statistikkÅr'")
+                latest_data['year'] = latest_data['statistikkÅr']
+            
+            # If neither column exists, add a default year
+            if 'year' not in latest_data.columns:
+                print("Adding default 'year' column with value 2024")
+                latest_data['year'] = 2024
+                
             return latest_data
         except Exception as e:
             print(f"Error loading data: {e}")
